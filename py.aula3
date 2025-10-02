@@ -1,0 +1,53 @@
+!pip install PyPDF2
+
+
+
+from google.colab import files
+import PyPDF2
+import csv
+
+# Função para carregar o arquivo PDF e extrair texto
+def carregar_pdf():
+    uploaded = files.upload()
+    nome_arquivo = list(uploaded.keys())[0]
+    
+    # Extração do texto do PDF
+    texto = ""
+    with open(nome_arquivo, "rb") as pdf_file:
+        leitor = PyPDF2.PdfReader(pdf_file)
+        for pagina in leitor.pages:
+            texto += pagina.extract_text()  
+    print("Texto carregado do PDF com sucesso!")
+    return texto
+
+# Função para salvar o conteúdo em um arquivo CSV
+def salvar_em_csv(texto):
+    with open("conteudo_livro.csv", "w", newline="", encoding="utf-8") as f:
+        writer = csv.writer(f)
+        writer.writerow(["Texto"])
+        writer.writerow([texto])
+    
+    print("CSV com conteúdo do livro criado!")
+
+
+
+
+def responder (pergunta):
+  #Procurar pergunta dentro do codigo
+  if pergunta.lower() in texto.lower():
+    #Quebrar o texto em frases para achar uma resposta
+    frases = texto.split(".")
+    for frase in frases:
+      if pergunta.lower() in texto.lower():
+        return frase.strip() + "."
+      return "Encontrei algo, mas não consegui extrair a frase completa."
+    else:
+      return "Não encontrei uma resposta exata, tente reformular a pergunta."
+
+#Loop de Interação
+while True:
+  pergunta = input("Digite sua pergunta (ou 'sair' para encerrar): ")
+  if pergunta.lower() == "sair":
+    break
+  resposta = responder(pergunta)
+  print("RESPOSTA: ", resposta)
